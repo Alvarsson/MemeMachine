@@ -12,17 +12,14 @@ app.use(express.urlencoded({extended: true})); // This will parse urlencoded pay
 app.use(express.static('public')); // This will serve public directory on our server.
 app.set('view engine', 'ejs'); // So express uses ejs as its templating engine.
 
-// Routes
-app.get('/', (req, res) => {
-  return res.render("index");
-});
-
-app.get("/", (req, res) => {
+app.get("/meme", (req, res) => {
 	axios
 		.get("https://meme-api.herokuapp.com/gimme")
 		.then((memes) => {
+            console.log(memes.data.url)
+            url = memes.data.url
 			return res.render("index", {
-				memes: _.sampleSize(memes.data.data.memes, 10)
+                // ALBATRON TODO
 			});
 		})
 		.catch((e) => {
@@ -30,27 +27,6 @@ app.get("/", (req, res) => {
 		});
 });
 
-app.post("/generate", (req, res) => {
-	axios
-		.post(
-			"https://api.imgflip.com/caption_image",
-			{},
-			{
-				params: {
-					template_id: req.body.template_id,
-					username: req.body.username,
-					password: req.body.password,
-					text0: req.body.text0,
-					text1: req.body.text1,
-				},
-			}
-		)
-		.then((response) => {
-			return res.send(`<img src=${response.data.data.url}>`);
-		}).catch((e) => {
-            return res.status(403).send("403 Client Error")
-        });
-});
 
 // Listeing to server
 app.listen(3000, () => {

@@ -12,6 +12,10 @@ app.use(express.urlencoded({extended: true})); // This will parse urlencoded pay
 app.use(express.static('public')); // This will serve public directory on our server.
 app.set('view engine', 'ejs'); // So express uses ejs as its templating engine.
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
 app.post("/generate", (req, res) => {
 	axios
 		.post(
@@ -38,6 +42,7 @@ app.get("/", (req, res) => {
 	axios
 		.get("https://api.imgflip.com/get_memes")
 		.then((memes) => {
+            console.log(memes.data.data.memes)
 			return res.render("index", {
 				memes: _.sampleSize(memes.data.data.memes, 1)
 			});
@@ -46,6 +51,25 @@ app.get("/", (req, res) => {
 			return res.status(500).send("500 Internal Server Error");
 		});
 });
+// NOT USE API duh
+butterJudges = ["https://imgflip.com/i/5t6uyj","https://imgflip.com/i/5t6v1v","https://imgflip.com/i/5t6vi0", "https://imgflip.com/i/5t6vm8", "https://imgflip.com/i/5t6vs2" ]
+app.get("/butter", (req,res) => {
+    axios.get("").then((memes) => {
+        return res.render("index", {
+            memes: [{
+                id: '71428573',
+                name: 'Butter',
+                url: butterJudges[getRandomInt(5)],
+                width: 698,
+                height: 900,
+                box_count: 2
+            }]
+        });
+    })
+    .catch((e) => {
+        return res.status(500).send("500 Internal Server Error");
+    });
+})
 /* app.get("/meme", (req, res) => {
 	axios
 		.get("https://meme-api.herokuapp.com/gimme")
